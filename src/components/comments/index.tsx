@@ -4,7 +4,7 @@ import { Loading } from "../loading"
 import { PreImg } from "../pre-img"
 import { Icon } from "../../iconfont"
 import { timeDelta } from "../../utils"
-import { AccessCode, AccessToken, Comment } from "../../request"
+import { AccessCode, AccessToken, Comment, User } from "../../request"
 import { useForceUpdate } from "../../hooks"
 
 const createCommentsLazy = (
@@ -17,6 +17,9 @@ const createCommentsLazy = (
   React.lazy(async () => {
     const comments = await Comment.getComments(
       Comment.createCommentUrl(username, repo, issue_id, access)
+    )
+    const { login: currentLogin } = await User.requestUserInfo(
+      User.createUserInfoUrl(access)
     )
     return {
       default: () => (
@@ -58,12 +61,14 @@ const createCommentsLazy = (
                               <li>{login}</li>
                               <li>
                                 <span className="Comments-Text">{body}</span>
-                                <span
-                                  className="Comments-Delete"
-                                  onClick={deleteComment}
-                                >
-                                  <Icon.Delete />
-                                </span>
+                                {currentLogin === login && (
+                                  <span
+                                    className="Comments-Delete"
+                                    onClick={deleteComment}
+                                  >
+                                    <Icon.Delete />
+                                  </span>
+                                )}
                               </li>
                               <li className="Comments-Time">
                                 <span>

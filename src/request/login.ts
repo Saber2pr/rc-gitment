@@ -1,4 +1,5 @@
 import { parseUrlParam } from "../utils"
+import { UserInfoType } from "./type"
 const localStore = localStorage
 
 export namespace AccessCode {
@@ -16,7 +17,7 @@ export namespace User {
   export const createUserInfoUrl = (access_token: string) =>
     `https://api.github.com/user?access_token=${access_token}`
 
-  export const requestUserInfo = (userInfoUrl: string) =>
+  export const requestUserInfo = (userInfoUrl: string): Promise<UserInfoType> =>
     fetch(userInfoUrl).then(res => res.json())
 }
 
