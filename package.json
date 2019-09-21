@@ -1,0 +1,51 @@
+{
+  "name": "rc-gitment",
+  "version": "0.0.1",
+  "description": "comments based on github issue(OAuth) for react.",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development webpack -w",
+    "dev": "cross-env NODE_ENV=development webpack-dev-server",
+    "build:app": "cross-env NODE_ENV=production webpack",
+    "build": "tsc && move src lib .ts .tsx"
+  },
+  "files": [
+    "lib/*"
+  ],
+  "main": "./lib/index.js",
+  "author": "saber2pr",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Saber2pr/rc-gitment.git"
+  },
+  "license": "ISC",
+  "keywords": [
+    "react",
+    "github",
+    "comment"
+  ],
+  "dependencies": {
+    "@types/react": "^16.8.19",
+    "@types/react-dom": "^16.8.4",
+    "normalize.css": "^8.0.1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
+  "devDependencies": {
+    "@saber2pr/move": "^0.0.1",
+    "@saber2pr/webpack-configer": "0.0.9",
+    "cross-env": "^6.0.0",
+    "css-loader": "^2.1.1",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "html-webpack-plugin": "^3.2.0",
+    "less": "^3.9.0",
+    "less-loader": "^5.0.0",
+    "less-plugin-clean-css": "^1.5.1",
+    "style-loader": "^0.23.1",
+    "ts-loader": "^6.0.2",
+    "typescript": "^3.5.1",
+    "url-loader": "^2.0.0",
+    "webpack": "^4.33.0",
+    "webpack-cli": "^3.3.3",
+    "webpack-dev-server": "^3.7.1"
+  }
+}
