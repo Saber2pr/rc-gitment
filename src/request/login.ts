@@ -26,7 +26,7 @@ export namespace AccessToken {
     client_id: string,
     client_secret: string
   ) =>
-    `https://github.com/login/oauth/access_token?client_id=${client_id}&client_secret=${client_secret}&code=${code}`
+    `https://cors-anywhere.herokuapp.com/https://github.com/login/oauth/access_token?client_id=${client_id}&client_secret=${client_secret}&code=${code}`
 
   export const getAccessToken = (accessTokenUrl: string): Promise<string> => {
     const access_token = localStore.getItem("access_token")
