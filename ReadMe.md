@@ -19,6 +19,10 @@ export const config = {
 ReactDOM.render(<Comments {...config} />, document.querySelector("#root"))
 ```
 
+# Demo
+
+[rc-gitment](https://saber2pr.github.io/rc-gitment/build/)
+
 # Author
 
 saber2pr
