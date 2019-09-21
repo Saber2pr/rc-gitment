@@ -40,6 +40,9 @@ export namespace AccessToken {
   }
 
   export const saveAccessToken = (access_token: string) => {
-    localStore.setItem("access_token", access_token)
+    localStore.setItem(
+      "access_token",
+      parseUrlParam("?" + access_token)["access_token"]
+    )
   }
 }
