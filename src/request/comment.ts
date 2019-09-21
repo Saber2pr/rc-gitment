@@ -26,4 +26,12 @@ export namespace Comment {
         Authorization: `token ${accessToken}`
       }
     }).then(res => res.json())
+
+  export const deleteComment = (commentUrl: string, accessToken: string) =>
+    fetch(commentUrl, {
+      method: "DELETE",
+      headers: {
+        Authorization: `token ${accessToken}`
+      }
+    })
 }

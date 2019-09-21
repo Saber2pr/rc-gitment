@@ -8,4 +8,5 @@ export namespace Icon {
     <i className="iconfont icon-baitianmoshimingliangmoshi" />
   )
   export const Head = () => <i className="iconfont icon-icon26" />
+  export const Delete = () => <i className="iconfont icon-shanchu" />
 }

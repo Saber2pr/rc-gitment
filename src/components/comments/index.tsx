@@ -11,7 +11,8 @@ const createCommentsLazy = (
   username: string,
   repo: string,
   issue_id: number,
-  access: string
+  access: string,
+  refresh: () => void
 ) =>
   React.lazy(async () => {
     const comments = await Comment.getComments(
@@ -20,43 +21,67 @@ const createCommentsLazy = (
     return {
       default: () => (
         <>
-          {comments.map(
-            (
-              { user: { login, avatar_url, html_url }, body, updated_at },
-              i
-            ) => (
-              <dd key={body + i}>
-                <table>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <a href={html_url}>
-                          <PreImg
-                            className="Comments-Head"
-                            src={avatar_url}
-                            fallback={<Icon.Head />}
-                          />
-                        </a>
-                      </td>
-                      <td>
-                        <ul className="Comments-Ul">
-                          <li>{login}</li>
-                          <li className="Comments-Text">
-                            <span>{body}</span>
-                          </li>
-                          <li className="Comments-Time">
-                            <span>
-                              {timeDelta(new Date().toISOString(), updated_at)}
-                            </span>
-                          </li>
-                        </ul>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </dd>
-            )
-          )}
+          {comments
+            .reverse()
+            .map(
+              (
+                {
+                  user: { login, avatar_url, html_url },
+                  body,
+                  updated_at,
+                  url
+                },
+                i
+              ) => {
+                const deleteComment = () => {
+                  const res = confirm(
+                    `确定删除此条评论qwq??\n删除内容: ${body}`
+                  )
+                  res && Comment.deleteComment(url, access).then(refresh)
+                }
+                return (
+                  <dd key={body + i}>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <a href={html_url}>
+                              <PreImg
+                                className="Comments-Head"
+                                src={avatar_url}
+                                fallback={<Icon.Head />}
+                              />
+                            </a>
+                          </td>
+                          <td>
+                            <ul className="Comments-Ul">
+                              <li>{login}</li>
+                              <li>
+                                <span className="Comments-Text">{body}</span>
+                                <span
+                                  className="Comments-Delete"
+                                  onClick={deleteComment}
+                                >
+                                  <Icon.Delete />
+                                </span>
+                              </li>
+                              <li className="Comments-Time">
+                                <span>
+                                  {timeDelta(
+                                    new Date().toISOString(),
+                                    updated_at
+                                  )}
+                                </span>
+                              </li>
+                            </ul>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </dd>
+                )
+              }
+            )}
         </>
       )
     }
@@ -117,12 +142,12 @@ export interface Comments {
 const useSubmit = (
   username: string,
   repo: string,
-  issue_id: number
+  issue_id: number,
+  refresh: () => void
 ): [
   React.MutableRefObject<HTMLInputElement>,
   (event: React.FormEvent<HTMLFormElement>) => void
 ] => {
-  const forceUpdate = useForceUpdate()
   const input_ref = useRef<HTMLInputElement>()
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -138,7 +163,7 @@ const useSubmit = (
       input_ref.current.value,
       access_token
     ).then(() => {
-      forceUpdate()
+      refresh()
       input_ref.current.value = ""
     })
   }
@@ -152,9 +177,16 @@ export const Comments = ({
   client_secret,
   issue_id = 1
 }: Comments) => {
-  const [input_ref, submit] = useSubmit(username, repo, issue_id)
+  const forceUpdate = useForceUpdate()
+  const [input_ref, submit] = useSubmit(username, repo, issue_id, forceUpdate)
   const access = AccessToken.checkAccess()
-  const CommentsLazy = createCommentsLazy(username, repo, issue_id, access)
+  const CommentsLazy = createCommentsLazy(
+    username,
+    repo,
+    issue_id,
+    access,
+    forceUpdate
+  )
   return (
     <dl className="Comments">
       <dt>
