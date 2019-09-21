@@ -7,10 +7,15 @@ import { timeDelta } from "../../utils"
 import { AccessCode, AccessToken, Comment } from "../../request"
 import { useForceUpdate } from "../../hooks"
 
-const createCommentsLazy = (username: string, repo: string, issue_id: number) =>
+const createCommentsLazy = (
+  username: string,
+  repo: string,
+  issue_id: number,
+  access: string
+) =>
   React.lazy(async () => {
     const comments = await Comment.getComments(
-      Comment.createCommentUrl(username, repo, issue_id)
+      Comment.createCommentUrl(username, repo, issue_id, access)
     )
     return {
       default: () => (
@@ -121,8 +126,13 @@ const useSubmit = (
   const input_ref = useRef<HTMLInputElement>()
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const commentUrl = Comment.createCommentUrl(username, repo, issue_id)
     const access_token = localStorage.getItem("access_token")
+    const commentUrl = Comment.createCommentUrl(
+      username,
+      repo,
+      issue_id,
+      access_token
+    )
     Comment.createComment(
       commentUrl,
       input_ref.current.value,
@@ -144,7 +154,7 @@ export const Comments = ({
 }: Comments) => {
   const [input_ref, submit] = useSubmit(username, repo, issue_id)
   const access = AccessToken.checkAccess()
-  const CommentsLazy = createCommentsLazy(username, repo, issue_id)
+  const CommentsLazy = createCommentsLazy(username, repo, issue_id, access)
   return (
     <dl className="Comments">
       <dt>
