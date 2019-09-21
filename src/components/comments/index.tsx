@@ -197,7 +197,7 @@ export const Comments = ({
   return (
     <dl className="Comments">
       <dt>
-        <strong className="Comments-Title">评论</strong>
+        <strong className="Comments-Title">留言</strong>
         <form className="Comments-Form" onSubmit={submit}>
           <input type="text" className="Comments-Form-Input" ref={input_ref} />
           <button className="Comments-Form-Button">发送</button>

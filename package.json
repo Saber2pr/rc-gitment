@@ -1,5 +1,5 @@
 {
-  "name": "rc-gitment",
+  "name": "@saber2pr/rc-gitment",
   "version": "0.0.1",
   "description": "comments based on github issue(OAuth) for react.",
   "scripts": {
