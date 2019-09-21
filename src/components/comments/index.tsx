@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import "./style.less"
-import { getComments } from "../../request/comment"
 import { Loading } from "../loading"
 import { PreImg } from "../pre-img"
 import { Icon } from "../../iconfont"
 import { timeDelta } from "../../utils"
-import { AccessCode, AccessToken } from "../../request/login"
+import { AccessCode, AccessToken, Comment } from "../../request"
+import { useForceUpdate } from "../../hooks"
 
 const createCommentsLazy = (username: string, repo: string, issue_id: number) =>
   React.lazy(async () => {
-    const comments = await getComments(username, repo, issue_id)
+    const comments = await Comment.getComments(
+      Comment.createCommentUrl(username, repo, issue_id)
+    )
     return {
       default: () => (
         <>
@@ -102,6 +104,29 @@ export interface Comments {
   issue_id?: number
 }
 
+const useSubmit = (
+  username: string,
+  repo: string,
+  issue_id: number
+): [
+  React.MutableRefObject<HTMLInputElement>,
+  (event: React.FormEvent<HTMLFormElement>) => void
+] => {
+  const forceUpdate = useForceUpdate()
+  const input_ref = useRef<HTMLInputElement>()
+  const submit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const commentUrl = Comment.createCommentUrl(username, repo, issue_id)
+    const access_token = localStorage.getItem("access_token")
+    Comment.createComment(
+      commentUrl,
+      input_ref.current.value,
+      access_token
+    ).then(forceUpdate)
+  }
+  return [input_ref, submit]
+}
+
 export const Comments = ({
   username,
   repo,
@@ -109,14 +134,15 @@ export const Comments = ({
   client_secret,
   issue_id = 1
 }: Comments) => {
+  const [input_ref, submit] = useSubmit(username, repo, issue_id)
   const access = AccessToken.checkAccess()
   const CommentsLazy = createCommentsLazy(username, repo, issue_id)
   return (
     <dl className="Comments">
       <dt>
         <strong className="Comments-Title">评论</strong>
-        <form className="Comments-Form">
-          <input type="text" className="Comments-Form-Input" />
+        <form className="Comments-Form" onSubmit={submit}>
+          <input type="text" className="Comments-Form-Input" ref={input_ref} />
           <button className="Comments-Form-Button">发送</button>
         </form>
       </dt>
