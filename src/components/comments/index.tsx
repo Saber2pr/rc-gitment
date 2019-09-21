@@ -127,7 +127,10 @@ const useSubmit = (
       commentUrl,
       input_ref.current.value,
       access_token
-    ).then(forceUpdate)
+    ).then(() => {
+      forceUpdate()
+      input_ref.current.value = ""
+    })
   }
   return [input_ref, submit]
 }
