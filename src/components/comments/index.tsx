@@ -72,7 +72,12 @@ const Login = ({
       </dd>
     </dl>
   )
-  const wait = <div>正在身份认证</div>
+  const wait = (
+    <div>
+      正在身份认证
+      <Loading />
+    </div>
+  )
 
   const [com, display] = useState(init)
 

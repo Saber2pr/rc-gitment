@@ -1,5 +1,4 @@
 export const timeDelta = (time1: string, time2: string) => {
-  console.log(time1, time2)
   const Time1 = new Date(time1).getTime()
   const Time2 = new Date(time2).getTime()
 
