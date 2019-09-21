@@ -163,6 +163,10 @@ const useSubmit = (
   const input_ref = useRef<HTMLInputElement>()
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (input_ref.current.value === "") {
+      alert("内容不能为空！qwq")
+      return
+    }
     const access_token = localStorage.getItem("access_token")
     const commentUrl = Comment.createCommentUrl(username, repo, issue_id)
     Comment.createComment(
