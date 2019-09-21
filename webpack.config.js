@@ -7,6 +7,8 @@ const extractLess = new ExtractTextPlugin("style.min.css")
 
 const { WebpackConfig, templateContent } = require("@saber2pr/webpack-configer")
 
+const lastBuild = `<script>console.log('Last Build time: ${new Date().toLocaleString()}')</script>`
+
 module.exports = WebpackConfig({
   entry: "./src/app.tsx",
   resolve: {
@@ -52,6 +54,7 @@ module.exports = WebpackConfig({
   plugins: [
     new HtmlWebpackPlugin({
       templateContent: templateContent("react-ts", {
+        injectHead: lastBuild,
         injectBody: '<div id="root"></div>'
       })
     }),
