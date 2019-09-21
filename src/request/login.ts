@@ -14,11 +14,12 @@ export namespace AccessCode {
 }
 
 export namespace User {
-  export const createUserInfoUrl = (access_token: string) =>
-    `https://api.github.com/user?access_token=${access_token}`
-
-  export const requestUserInfo = (userInfoUrl: string): Promise<UserInfoType> =>
-    fetch(userInfoUrl).then(res => res.json())
+  export const requestUserInfo = (accessToken: string): Promise<UserInfoType> =>
+    fetch("https://api.github.com/user", {
+      headers: {
+        Authorization: `token ${accessToken}`
+      }
+    }).then(res => res.json())
 }
 
 export namespace AccessToken {

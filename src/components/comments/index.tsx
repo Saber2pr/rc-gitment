@@ -16,11 +16,14 @@ const createCommentsLazy = (
 ) =>
   React.lazy(async () => {
     const comments = await Comment.getComments(
-      Comment.createCommentUrl(username, repo, issue_id, access)
+      Comment.createCommentUrl(username, repo, issue_id),
+      access
     )
-    const { login: currentLogin } = await User.requestUserInfo(
-      User.createUserInfoUrl(access)
-    )
+    if (!Array.isArray(comments)) {
+      refresh()
+      return
+    }
+    const { login: currentLogin } = await User.requestUserInfo(access)
     return {
       default: () => (
         <>
@@ -37,10 +40,9 @@ const createCommentsLazy = (
                 i
               ) => {
                 const deleteComment = () => {
-                  const res = confirm(
-                    `确定删除此条评论qwq??\n删除内容: ${body}`
-                  )
-                  res && Comment.deleteComment(url, access).then(refresh)
+                  if (confirm(`确定删除此条评论qwq??\n删除内容: ${body}`)) {
+                    Comment.deleteComment(url, access).then(refresh)
+                  }
                 }
                 return (
                   <dd key={body + i}>
@@ -101,9 +103,14 @@ const Login = ({
 }) => {
   const init = (
     <dl>
-      <dt>先登录</dt>
+      <dt>登录后查看内容</dt>
       <dd>
-        <button onClick={() => (location.href = code_url)}>登录</button>
+        <button
+          className="Comments-Form-Button"
+          onClick={() => (location.href = code_url)}
+        >
+          登录
+        </button>
       </dd>
     </dl>
   )
@@ -157,12 +164,7 @@ const useSubmit = (
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const access_token = localStorage.getItem("access_token")
-    const commentUrl = Comment.createCommentUrl(
-      username,
-      repo,
-      issue_id,
-      access_token
-    )
+    const commentUrl = Comment.createCommentUrl(username, repo, issue_id)
     Comment.createComment(
       commentUrl,
       input_ref.current.value,
